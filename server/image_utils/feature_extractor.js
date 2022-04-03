@@ -1,10 +1,10 @@
 import * as tf from "@tensorflow/tfjs";
 
 const odModelPath =
-  "https://raw.githubusercontent.com/yaincoding/fs_models/master/object_detection/model.json";
+  "https://raw.githubusercontent.com/yaincoding/warigari/master/src/tf_models/object_detection/model.json";
 
 const classifierModelPath =
-  "https://raw.githubusercontent.com/yaincoding/fs_models/master/feature_extraction/model.json";
+  "https://raw.githubusercontent.com/yaincoding/warigari/master/src/tf_models/classifier/model.json";
 
 const loadOdModel = async () => {
   const model = await tf.loadGraphModel(odModelPath);
