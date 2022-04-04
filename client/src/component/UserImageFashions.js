@@ -1,23 +1,58 @@
-import React, { useContext } from "react";
-import { UserImageFashionsContext } from "../context/UserImageFashionsContextProvider";
+import React, { useState, useContext, useEffect } from "react";
 import { funcdo } from "../utils/image_utils/feature_extractor";
 
 const UserImageFashions = () => {
-  const { state, contextDispatch } = useContext(UserImageFashionsContext);
+  const [searchData, setSearchData] = useState(null);
+
+  const itemToFrame = (item) => {
+    const img = item.cropImage;
+    const label = item.label;
+
+    const span = document.createElement("span");
+
+    const p = document.createElement("p");
+    p.innerText = label;
+    span.appendChild(img);
+    span.appendChild(p);
+
+    return span;
+  };
+
+  const renderImage = (img, original = false) => {
+    const frame = document.getElementById("fashions");
+    if (original) {
+      while (frame.lastChild) {
+        frame.removeChild(document.getElementById("fashions").lastChild);
+      }
+      const div = document.createElement("div");
+      div.appendChild(img);
+      frame.appendChild(div);
+    } else {
+      frame.appendChild(img);
+    }
+  };
+
+  useEffect(() => {
+    if (searchData) {
+      const { originalImage, items } = searchData;
+      renderImage(originalImage, true);
+      for (const item of items) {
+        renderImage(itemToFrame(item));
+      }
+    }
+  });
 
   const onImageChange = (e) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => {
       const img = new Image();
       img.addEventListener("load", () => {
-        funcdo(img, contextDispatch);
+        funcdo(img, setSearchData);
       });
       img.src = reader.result;
     });
     reader.readAsDataURL(e.target.files[0]);
   };
-
-  const { originalImage, items } = state;
 
   return (
     <div>
@@ -27,7 +62,6 @@ const UserImageFashions = () => {
         name="img"
         onChange={onImageChange}
       />
-      {originalImage && <img src={originalImage}></img>}
       <div id="fashions"></div>
     </div>
   );
