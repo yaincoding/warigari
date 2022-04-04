@@ -1,12 +1,15 @@
 import "./App.css";
 import UserImageFashions from "./component/UserImageFashions";
+import UserImageFashionsContextProvider from "./context/UserImageFashionsContextProvider";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <UserImageFashions />
-      </header>
+      <div>
+        <UserImageFashionsContextProvider>
+          <UserImageFashions />
+        </UserImageFashionsContextProvider>
+      </div>
     </div>
   );
 }
