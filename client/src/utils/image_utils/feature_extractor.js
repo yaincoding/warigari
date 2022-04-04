@@ -31,24 +31,6 @@ const labelMap = {
 
 const threshold = 0.5;
 
-const setImage = (imgTensor, original = false) => {
-  const canvas = document.createElement("canvas");
-  canvas.width = imgTensor.shape[1];
-  canvas.height = imgTensor.shape[0];
-  tf.browser.toPixels(imgTensor, canvas);
-  const frame = document.getElementById("fashions");
-  if (original) {
-    while (frame.lastChild) {
-      frame.removeChild(document.getElementById("fashions").lastChild);
-    }
-    const div = document.createElement("div");
-    div.appendChild(canvas);
-    frame.appendChild(div);
-  } else {
-    frame.appendChild(canvas);
-  }
-};
-
 const filterBoxes = (boxes, scores) => {
   scores = scores.dataSync().filter((s) => s >= threshold);
   boxes = boxes.dataSync().slice(0, 4 * scores.length);
@@ -83,9 +65,14 @@ const cropImage = (img_tensor, bboxes, img) => {
   return crops;
 };
 
-export const funcdo = async (img, contextDispatch) => {
+const imageTensorToCanvas = (imgTensor) => {
+  const canvas = document.createElement("canvas");
+  tf.browser.toPixels(tf.squeeze(imgTensor).div(255.0), canvas);
+  return canvas;
+};
+
+export const funcdo = async (img, setSearchData) => {
   const imgTensor = tf.browser.fromPixels(img).expandDims(0);
-  setImage(tf.squeeze(imgTensor).resizeBilinear([300, 300]).div(255.0), true);
   odModelPromise.then((model) => {
     model.executeAsync(imgTensor).then((preds) => {
       const scores = preds[2];
@@ -96,7 +83,6 @@ export const funcdo = async (img, contextDispatch) => {
 
       for (let crop of crops) {
         const cropImgTensor = crop["image"].resizeNearestNeighbor([224, 224]);
-        setImage(tf.squeeze(cropImgTensor).div(255.0));
         classifierModelPromise.then((model) => {
           const embedding = tf.sequential({
             layers: [model.layers[0], model.layers[1]],
@@ -118,19 +104,32 @@ export const funcdo = async (img, contextDispatch) => {
           const featureVector = embeddingOutput.dataSync();
           const label = labelMap[tf.argMax(output.dataSync()).dataSync()[0]];
 
+          const [_, height, width, __] = crop["image"].shape;
+          const newHeight = 200;
+          const newWidth = parseInt((newHeight * width) / height);
+
           items.push({
-            cropImage: tf.squeeze(cropImgTensor),
+            cropImage: imageTensorToCanvas(
+              tf.image.resizeNearestNeighbor(crop["image"], [
+                newHeight,
+                newWidth,
+              ])
+            ),
             featureVector: featureVector,
             label: label,
           });
         });
       }
 
-      contextDispatch({
-        value: {
-          originalImage: tf.squeeze(imgTensor),
-          items: items,
-        },
+      const [_, height, width, __] = imgTensor.shape;
+      const newHeight = 300;
+      const newWidth = parseInt((newHeight * width) / height);
+
+      setSearchData({
+        originalImage: imageTensorToCanvas(
+          tf.image.resizeNearestNeighbor(imgTensor, [newHeight, newWidth])
+        ),
+        items: items,
       });
 
       imgTensor.dispose();
