@@ -1,7 +1,7 @@
 import * as aws from "aws-sdk";
-import { s3Config } from "../config/config.js";
+import config from "../config/config.js";
 
-const s3 = aws.S3();
+const s3 = aws.S3(config.s3.s3Config);
 
 /**
  * @description
@@ -9,11 +9,12 @@ const s3 = aws.S3();
  * @param
  * @return
  */
-const func1 = async (src) => {
+export const func1 = async (src) => {
   // 버킷에서 객체 가져온다
   const data = await getS3Object(src);
+  console.log(data);
   // 가져온 객체 csv 파일 문자열 처리
-  const [name, imgUrl, ...args] = handleCsv(data);
+  // const [name, imgUrl, ...args] = handleCsv(data);
   // db 연결해서 저장
 };
 
