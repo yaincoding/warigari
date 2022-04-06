@@ -1,10 +1,10 @@
 import * as tf from "@tensorflow/tfjs";
 
 const odModelPath =
-  "https://raw.githubusercontent.com/yaincoding/warigari/master/src/tf_models/object_detection/model.json";
+  "https://raw.githubusercontent.com/yaincoding/warigari/master/client/src/utils/tf_models/object_detection/model.json";
 
 const classifierModelPath =
-  "https://raw.githubusercontent.com/yaincoding/warigari/master/src/tf_models/classifier/model.json";
+  "https://raw.githubusercontent.com/yaincoding/warigari/master/client/src/utils/tf_models/classifier/model.json";
 
 const loadOdModel = async () => {
   const model = await tf.loadGraphModel(odModelPath);
@@ -30,14 +30,6 @@ const labelMap = {
 };
 
 const threshold = 0.5;
-
-const add_img = (img_tensor) => {
-  const canvas = document.createElement("canvas");
-  canvas.width = img_tensor.shape[1];
-  canvas.height = img_tensor.shape[0];
-  tf.browser.toPixels(img_tensor, canvas);
-  document.getElementById("fashions").appendChild(canvas);
-};
 
 const filterBoxes = (boxes, scores) => {
   scores = scores.dataSync().filter((s) => s >= threshold);
@@ -73,17 +65,24 @@ const cropImage = (img_tensor, bboxes, img) => {
   return crops;
 };
 
-export const funcdo = async (img) => {
+const imageTensorToCanvas = (imgTensor) => {
+  const canvas = document.createElement("canvas");
+  tf.browser.toPixels(tf.squeeze(imgTensor).div(255.0), canvas);
+  return canvas;
+};
+
+export const funcdo = async (img, setSearchData) => {
   const imgTensor = tf.browser.fromPixels(img).expandDims(0);
-  add_img(tf.squeeze(imgTensor).resizeBilinear([300, 300]).div(255.0));
   odModelPromise.then((model) => {
     model.executeAsync(imgTensor).then((preds) => {
       const scores = preds[2];
       const boxes = filterBoxes(preds[7], scores);
       const crops = cropImage(imgTensor, boxes, img);
+
+      const items = [];
+
       for (let crop of crops) {
         const cropImgTensor = crop["image"].resizeNearestNeighbor([224, 224]);
-        add_img(tf.squeeze(cropImgTensor).div(255.0));
         classifierModelPromise.then((model) => {
           const embedding = tf.sequential({
             layers: [model.layers[0], model.layers[1]],
@@ -105,9 +104,34 @@ export const funcdo = async (img) => {
           const featureVector = embeddingOutput.dataSync();
           const label = labelMap[tf.argMax(output.dataSync()).dataSync()[0]];
 
-          console.log({ featureVector: featureVector, label: label });
+          const [_, height, width, __] = crop["image"].shape;
+          const newHeight = 200;
+          const newWidth = parseInt((newHeight * width) / height);
+
+          items.push({
+            cropImage: imageTensorToCanvas(
+              tf.image.resizeNearestNeighbor(crop["image"], [
+                newHeight,
+                newWidth,
+              ])
+            ),
+            featureVector: featureVector,
+            label: label,
+          });
         });
       }
+
+      const [_, height, width, __] = imgTensor.shape;
+      const newHeight = 300;
+      const newWidth = parseInt((newHeight * width) / height);
+
+      setSearchData({
+        originalImage: imageTensorToCanvas(
+          tf.image.resizeNearestNeighbor(imgTensor, [newHeight, newWidth])
+        ),
+        items: items,
+      });
+
       imgTensor.dispose();
     });
   });
