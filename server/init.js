@@ -1,5 +1,5 @@
 import app from "./server.js";
+import config from "./config/config.js";
 
-const PORT = 4000;
-
-app.listen(PORT, () => console.log("server"));
+const PORT = config.PORT;
+app.listen(PORT, () => console.log(`Server listening to port ${PORT}! 👂`));
