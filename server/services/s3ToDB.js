@@ -9,16 +9,9 @@ const s3 = new AWS.S3(config.s3.s3Config);
  * @param
  * @return
  */
-export const func1 = async (src) => {
-  // 버킷에서 객체 가져온다
-  const data = await getS3Object(src);
-  console.log(data);
-  // 가져온 객체 csv 파일 문자열 처리
-  // const [name, imgUrl, ...args] = handleCsv(data);
-  // db 연결해서 저장
-};
+export const func1 = async (src) => getS3Object("musinsa.csv");
 
 const getS3Object = async (objPath) =>
-  s3.getObject({ Bucket: "123", Key: objPath });
+  s3.getObject({ Bucket: config.s3.S3_BUCKET_NAME, Key: objPath }).promise();
 
-const handleCsv = (data) => ["name", "url"];
+// const handleCsv = (data) => ["name", "url"];
