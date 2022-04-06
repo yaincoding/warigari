@@ -1,7 +1,7 @@
-import * as aws from "aws-sdk";
+import AWS from "aws-sdk";
 import config from "../config/config.js";
 
-const s3 = aws.S3(config.s3.s3Config);
+const s3 = new AWS.S3(config.s3.s3Config);
 
 /**
  * @description
