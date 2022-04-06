@@ -30,7 +30,8 @@ def parseItems(categoryNumber, page):
             'data-original'].replace('_125.jpg', '_500.jpg')
         name = i.find('a', attrs={'name': 'goods_link'})['title']
         price = i.find('p', attrs={'class': 'price'}).decode_contents()
-        price = re.sub(r'\<del\>.*\<\/del\>', '', price).strip()
+        price = re.sub(r'\<del\>.*\<\/del\>', '', price)
+        price = re.sub(r'[,원]', '', price).strip()
         parsed_items.append({
 
             'name': name,
@@ -54,7 +55,7 @@ def scrape(save_dir, pages_per_category):
             if os.path.isfile(f'{category_dir}/{fname}'):
                 continue
             df = parseItems(categoryNumber, page)
-            df.to_csv(f'{category_dir}/{fname}', sep=',', header=True,
+            df.to_csv(f'{category_dir}/{fname}', sep=',', header=False,
                       index=False, quoting=csv.QUOTE_ALL)
             time.sleep(1)
 
