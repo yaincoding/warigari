@@ -6,22 +6,24 @@ export const getInfoFromS3 = async (req, res) => {
     const result = await func1();
     const arr = result.Body.toString()
       .split(/\r?\n/g)
-      .map((item) => item.split(","));
+      .map((item) =>
+        item.split(",").map((element) => element.replace(/"/g, ""))
+      );
 
-    const promises = arr.map((item) =>
-      db.Items.create({
-        productName: item[0],
-        productPart: item[1],
-        imageUrl: item[2],
-        unitPrice: Number(item[3]),
-      })
+    const promises = arr.map(
+      ([productName, productPart, imageUrl, unitPrice]) =>
+        db.Items.create({
+          productName,
+          productPart,
+          imageUrl,
+          unitPrice: Number(unitPrice),
+        })
     );
 
     await Promise.all(promises);
 
     return res.status(200).send("ok");
   } catch (e) {
-    console.log(e);
     return res.status(400).send("not ok");
   }
 };
