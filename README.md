@@ -3,6 +3,7 @@
 이커머스 온라인 쇼핑몰 구축을 쉽게 해주기 위한 스켈레톤 프로젝트
 
 <br>
+
 # 2. 실행 방법
 
 ## 1) React app
@@ -13,6 +14,7 @@ npm start
 ```
 
 <br>
+
 # 3. 개발환경 세팅
 
 ## 1) warigari
@@ -22,12 +24,14 @@ git clone https://github.com/yaincoding/warigari.git $HOME/workspace/warigari
 ```
 
 <br>
+
 ## 2) db
 ```
 
 ```
 
 <br>
+
 ## 3) elasticsearch
 
 ### a. 셋업
