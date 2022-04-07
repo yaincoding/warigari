@@ -33,6 +33,7 @@ git clone https://github.com/yaincoding/warigari.git $HOME/workspace/warigari
 ### a. 셋업
 ``` bash
 #scripts/elasticsearch/setup.sh 를 실행하거나 아래 명령어 라인들 실행
+#warigari를 다른 경로에 clone했다면 해당 $HOME/workspace/warigari/... 부분들 수정
 
 git clone https://github.com/deviantony/docker-elk.git $HOME/workspace/docker-elk
 
