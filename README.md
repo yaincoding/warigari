@@ -46,12 +46,15 @@ cp $HOME/workspace/warigari/scripts/elasticsearch/kibana.yml $HOME/workspace/doc
 cp $HOME/workspace/warigari/scripts/elasticsearch/docker-compose.yml $HOME/workspace/docker-elk/
 ```
 
+
 ### b. 실행
 ``` bash
 cd $HOME/workspace/docker-elk
 
 docker-compose up -d --build
 ```
+
+실행 후 http://localhost:9200 접속해서 클러스터 정보 정상적으로 뜨면 성공
 
 ### c. 데이터 색인
 ```
