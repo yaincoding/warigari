@@ -1,0 +1,1 @@
+{"name":"warigari","dependencies":{"aws-sdk":{"version":"2.1108.0"},"dotenv":{"version":"16.0.0"},"multer-s3":{"version":"2.10.0"},"multer":{"version":"1.4.4"}}}
