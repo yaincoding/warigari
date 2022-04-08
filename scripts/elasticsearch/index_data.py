@@ -19,6 +19,10 @@ settings = {
     
 }
 
+mappings = {
+    
+}
+
 es.indices.create(index=index_name, settings=settings, mappings=mappings)
 
 
