@@ -25,14 +25,21 @@ git clone https://github.com/yaincoding/warigari.git $HOME/workspace/warigari
 
 <br>
 
-## 2) db
+## 2) db 설치 및 데이터 저장
 ```
+# 먼저 MySQL이 실행되어야한다.
 
+cd $HOME/workspace/warigari/scripts/db
+
+pip install -r requirements.txt
+
+# python 3버전
+python dump_data.py
 ```
 
 <br>
 
-## 3) elasticsearch
+## 3) elasticsearch 설치 및 색인
 
 ### a. 셋업
 ``` bash
@@ -41,9 +48,14 @@ git clone https://github.com/yaincoding/warigari.git $HOME/workspace/warigari
 
 git clone https://github.com/deviantony/docker-elk.git $HOME/workspace/docker-elk
 
+cp $HOME/workspace/warigari/scripts/elasticsearch/Dockerfile $HOME/workspace/docker-elk/elasticsearch/
 cp $HOME/workspace/warigari/scripts/elasticsearch/elasticsearch.yml $HOME/workspace/docker-elk/elasticsearch/config/
+cp $HOME/workspace/warigari/scripts/elasticsearch/dictionary/*.txt $HOME/workspace/docker-elk/elasticsearch/config/
 cp $HOME/workspace/warigari/scripts/elasticsearch/kibana.yml $HOME/workspace/docker-elk/kibana/config/
 cp $HOME/workspace/warigari/scripts/elasticsearch/docker-compose.yml $HOME/workspace/docker-elk/
+
+mkdir $HOME/workspace/docker-elk/elasticsearch/plugins
+cp $HOME/workspace/warigari/scripts/elasticsearch/plugins/hanhinsam-0.1.zip $HOME/workspace/docker-elk/elasticsearch/plugins/
 ```
 
 
