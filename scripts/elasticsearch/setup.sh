@@ -2,6 +2,7 @@ git clone https://github.com/deviantony/docker-elk.git $HOME/workspace/docker-el
 
 cp $HOME/workspace/warigari/scripts/elasticsearch/Dockerfile $HOME/workspace/docker-elk/elasticsearch/
 cp $HOME/workspace/warigari/scripts/elasticsearch/elasticsearch.yml $HOME/workspace/docker-elk/elasticsearch/config/
+cp $HOME/workspace/warigari/scripts/elasticsearch/dictionary/*.txt $HOME/workspace/docker-elk/elasticsearch/config/
 cp $HOME/workspace/warigari/scripts/elasticsearch/kibana.yml $HOME/workspace/docker-elk/kibana/config/
 cp $HOME/workspace/warigari/scripts/elasticsearch/docker-compose.yml $HOME/workspace/docker-elk/
 
