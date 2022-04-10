@@ -5,14 +5,10 @@ const UserImageFashions = () => {
   const [searchData, setSearchData] = useState(null);
 
   const itemToFrame = (item) => {
-    const img = item.cropImage;
-    const label = item.label;
-
     const span = document.createElement("span");
-
+    span.appendChild(item.displayImage);
     const p = document.createElement("p");
-    p.innerText = label;
-    span.appendChild(img);
+    p.innerText = item.label;
     span.appendChild(p);
 
     return span;
