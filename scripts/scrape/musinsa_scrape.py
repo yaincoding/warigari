@@ -6,6 +6,7 @@ from urllib.request import urlopen
 import argparse
 import time
 import pandas as pd
+from tqdm import tqdm
 
 categoryMap = {
     "001": "top",
@@ -19,7 +20,7 @@ categoryMap = {
 def parseItems(categoryNumber, page):
     parsed_items = []
     html = urlopen(
-        f"https://www.musinsa.com/category/001?d_cat_cd={categoryNumber}&brand=&rate=&page_kind=search&list_kind=small&sort=pop&sub_sort=&page={page}&display_cnt=90&sale_goods=&group_sale=&kids=N&ex_soldout=&color=&price1=&price2=&exclusive_yn=&shoeSizeOption=&tags=&campaign_id=&timesale_yn=&q=&includeKeywords=&measure=")
+        f"https://www.musinsa.com/category/{categoryNumber}?d_cat_cd={categoryNumber}&brand=&rate=&page_kind=search&list_kind=small&sort=pop&sub_sort=&page={page}&display_cnt=90&sale_goods=&group_sale=&kids=N&ex_soldout=&color=&price1=&price2=&exclusive_yn=&shoeSizeOption=&tags=&campaign_id=&timesale_yn=&q=&includeKeywords=&measure=")
     bsObject = BeautifulSoup(html, "html.parser")
     items = bsObject.find('div', attrs={
         'class': 'list-box box'}).findAll('li', attrs={'class': 'li_box'})
@@ -46,11 +47,11 @@ def parseItems(categoryNumber, page):
 
 def scrape(save_dir, pages_per_category):
     df = pd.DataFrame(columns=['name', 'category', 'img_url', 'price'])
-    for (categoryNumber, categoryName) in categoryMap.items():
+    for (categoryNumber, categoryName) in tqdm(categoryMap.items()):
         category_dir = f'{save_dir}/{categoryName}'
         if not os.path.isdir(category_dir):
             os.makedirs(category_dir, exist_ok=True)
-        for page in range(1, pages_per_category + 1):
+        for page in tqdm(range(1, pages_per_category + 1)):
             fname = f'{page}.csv'
             if os.path.isfile(f'{category_dir}/{fname}'):
                 continue
