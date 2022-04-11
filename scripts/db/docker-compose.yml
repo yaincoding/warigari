@@ -1,0 +1,23 @@
+version: "3.7"
+services:
+  db:
+    image: mysql:8.0.28
+    container_name: warigari_mysql
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --lower_case_table_names=1
+    volumes:
+      - /Users/Shared/data/mysql-test:/var/lib/mysql
+    restart: always
+    networks:
+      - warigari_net
+
+networks:
+  warigari_net:
+    driver: bridge
+    name: warigari_net

@@ -3,6 +3,7 @@ import os
 import boto3
 import pandas as pd
 import pymysql
+from tqdm import tqdm
 
 # s3에서 데이터 파일 다운로드
 
@@ -28,7 +29,8 @@ else:
     s3.download_file(bucket_name, key, f'{key}')
 
 # 데이터 읽기
-df = pd.read_csv(key, sep=',', names=['productName', 'productPart', 'imageUrl', 'unitPrice'])
+df = pd.read_csv(key, sep=',', names=[
+                 'productName', 'productPart', 'imageUrl', 'unitPrice'])
 
 # mysql 연결
 mysql_conn = pymysql.connect(host='localhost', user='root',
@@ -60,11 +62,11 @@ cursor.execute(create_table_sql)
 
 # 데이터 저장
 insert_sql = 'INSERT INTO Items (productName, productPart, imageUrl, unitPrice) VALUES (%s, %s, %s, %s);'
-for (_, row) in df.iterrows():
-    productName = row['productName']
-    productPart = row['productPart']
-    imageUrl = row['imageUrl']
-    unitPrice = row['unitPrice']
+for (_, row) in tqdm(df.iterrows()):
+    productName=row['productName']
+    productPart=row['productPart']
+    imageUrl=row['imageUrl']
+    unitPrice=row['unitPrice']
     cursor.execute(insert_sql, (productName, productPart, imageUrl, unitPrice))
 
 mysql_conn.commit()
