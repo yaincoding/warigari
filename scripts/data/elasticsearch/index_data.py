@@ -8,6 +8,7 @@ from tqdm import tqdm
 from PIL import Image
 import io
 import urllib.request
+from urllib.error import HTTPError
 from image_feature import FashionDetector, FeatureExtractor
 
 # mysql 연결
@@ -134,13 +135,21 @@ feature_extractor = FeatureExtractor(classifier_model_path)
 
 
 def load_image(image_url):
-    res = urllib.request.urlopen(image_url).read()
+    try:
+        res = urllib.request.urlopen(image_url).read()
+    except HTTPError:
+        return None
     img = Image.open(io.BytesIO(res))
     return img
 
 
 def get_vectors(image_url):
     img = load_image(image_url)
+    if not img:
+        return {
+            'crop_feature_vector': None,
+            'full_feature_vector': None
+        }
     crops = detector.crop(img, min_score=0.6)
     if len(crops) > 0:
         crop_feature_vector = feature_extractor.extract_from_tensor(
