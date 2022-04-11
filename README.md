@@ -25,21 +25,31 @@ git clone https://github.com/yaincoding/warigari.git $HOME/workspace/warigari
 
 <br>
 
-## 2) db 설치 및 데이터 저장
-```
-# 먼저 MySQL이 실행되어야한다.
+## 2) python package 설치
 
-cd $HOME/workspace/warigari/scripts/db
+이후 필요한 python script 실행에 필요
 
+``` bash
+cd scripts
 pip install -r requirements.txt
+```
 
-# python 3버전
+<br>
+
+## 3) db 설치 및 데이터 저장
+``` bash
+# docker mysql 실행
+cd scripts/db
+docker-compose up -d --build
+
+# s3에서 초기 데이터 다운로드 및 db에 insert
+cd scripts/datadb
 python dump_data.py
 ```
 
 <br>
 
-## 3) elasticsearch 설치 및 색인
+## 4) elasticsearch 설치 및 색인
 
 ### a. 셋업
 ``` bash
@@ -59,7 +69,7 @@ cp $HOME/workspace/warigari/scripts/elasticsearch/plugins/hanhinsam-0.1.zip $HOM
 ```
 
 
-### b. 실행
+### b. Elasticsearch, Kibana 실행
 ``` bash
 cd $HOME/workspace/docker-elk
 
@@ -68,8 +78,23 @@ docker-compose up -d --build
 
 실행 후 http://localhost:9200 접속해서 클러스터 정보 정상적으로 뜨면 성공
 
-### c. 데이터 색인
+### c. elasticsearch index 생성 및 데이터 색인
+``` bash
+# 데이터 중 이미지 object detection, deep mlp 모델 실행에 필요한 c, python 패키지 등이 많아서 로컬이 지저분해질 수 있기에 docker 이미지를 만들어 실행
+cd scripts/data/elasticsearch
+docker build -t esindex .
+docker run --rm -it --network warigari_net
+
+#이후 docker containe에 접속되고 / 경로에 있게 된다.
+python index_data.py
 ```
-# MySQL -> Elasticsearch 데이터 색인 python 스크립트 실행
-# 혹은 MySQL -> Elasticsearch 일괄 색인하는 express api 호출
+
+이후 kibana console (`http://localhost:5601`)에 접속해서 아래 query dsl로 색인된 데이터 확인
+``` javascript
+POST /fashion/_search
+{
+    "query": {
+      "match_all": {}
+    }
+}
 ```
