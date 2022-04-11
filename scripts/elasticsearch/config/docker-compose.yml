@@ -36,9 +36,8 @@ services:
       - elasticsearch
 
 networks:
-  elk:
+  warigari:
     driver: bridge
 
 volumes:
-  setup:
   elasticsearch:
