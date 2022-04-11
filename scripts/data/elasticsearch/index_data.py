@@ -7,7 +7,7 @@ from elasticsearch import Elasticsearch
 from PIL import Image
 import io
 import urllib.request
-from image_feature import FashionDetector, FeatureExtractor
+from scripts.data.elasticsearch.image_feature import FashionDetector, FeatureExtractor
 
 
 # mysql 연결
