@@ -83,7 +83,7 @@ docker-compose up -d --build
 # 데이터 중 이미지 object detection, deep mlp 모델 실행에 필요한 c, python 패키지 등이 많아서 로컬이 지저분해질 수 있기에 docker 이미지를 만들어 실행
 cd scripts/data/elasticsearch
 docker build -t esindex .
-docker run --rm -it --network warigari_net
+docker run --rm -it --network warigari_net esindex
 
 #이후 docker containe에 접속되고 / 경로에 있게 된다.
 python index_data.py
