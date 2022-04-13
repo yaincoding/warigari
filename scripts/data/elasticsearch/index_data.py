@@ -181,7 +181,7 @@ def index_data():
         full_feature_vector = vectors['full_feature_vector']
 
         doc = {
-            '_index': fashion_alias,
+            '_index': index_name,
             '_source': {
                 'id': itemId,
                 'productName': productName,
