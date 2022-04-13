@@ -151,11 +151,13 @@ def get_vectors(image_url):
             'full_feature_vector': None
         }
     crops = detector.crop(img, min_score=0.6)
+    crop_feature_vector = None
     if len(crops) > 0:
         crop_feature_vector = feature_extractor.extract_from_tensor(
             crops[0])
         if crop_feature_vector is not None:
             crop_feature_vector = crop_feature_vector.tolist()
+    full_feature_vector = None
     full_feature_vector = feature_extractor.extract_from_image(img)
     if full_feature_vector is not None:
         full_feature_vector = full_feature_vector.tolist()

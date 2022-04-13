@@ -44,7 +44,6 @@ class FashionDetector:
                 [height, width],
                 "bilinear"
             )
-            #crop = np.array(crop)
             crops.append(crop)
 
         return crops
@@ -70,6 +69,8 @@ class FeatureExtractor:
 
     def extract_from_tensor(self, image):
         image = self.preprocess_image_tensor(image)
+        if len(image.shape) != 4 or image.shape[3] != 3:
+            return None
 
         embedding_layer = self.model.layers[0]
         embedding_output = embedding_layer.predict(image)
@@ -78,6 +79,8 @@ class FeatureExtractor:
 
     def extract_from_image(self, image):
         image = self.preprocess_image(image)
+        if len(image.shape) != 4 or image.shape[3] != 3:
+            return None
 
         embedding_layer = self.model.layers[0]
         embedding_output = embedding_layer.predict(image)
