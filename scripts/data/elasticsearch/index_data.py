@@ -126,11 +126,10 @@ def update_alias(index_name):
 
 
 index_name = create_index()
-update_alias(index_name)
 
 detector_model_path = "/tf_models/object_detection"
-detector = FashionDetector(detector_model_path)
 classifier_model_path = "/tf_models/classifier"
+detector = FashionDetector(detector_model_path)
 feature_extractor = FeatureExtractor(classifier_model_path)
 
 
@@ -198,3 +197,5 @@ def index_data():
 
 
 index_data()
+
+update_alias(index_name)
