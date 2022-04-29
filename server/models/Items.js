@@ -25,6 +25,14 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      fullFeatureVector: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      cropFeatureVector: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       sequelize,
