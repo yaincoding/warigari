@@ -100,7 +100,11 @@ def create_index():
             "imageUrl": {
                 "type": "keyword"
             },
-            "image_vector": {
+            "fullFeatureVector": {
+                "type": "dense_vector",
+                "dims": 256
+            },
+            "imageFeatureVector": {
                 "type": "dense_vector",
                 "dims": 256
             }
@@ -142,7 +146,7 @@ def load_image(image_url):
     return img
 
 
-def get_vectors(image_url):
+def extract_image_vectors(image_url):
     img = load_image(image_url)
     if not img:
         return {
@@ -170,14 +174,31 @@ def get_vectors(image_url):
 def index_data():
     cursor.execute('USE warigari;')
     cursor.execute(
-        'SELECT itemId, productName, productPart, unitPrice, imageUrl FROM Items;')
+        'SELECT itemId, productName, productPart, unitPrice, imageUrl, fullFeatureVector, cropFeatureVector FROM Items;')
     result = cursor.fetchall()
     docs = []
     for row in tqdm(result):
-        itemId, productName, productPart, unitPrice, imageUrl = row
-        vectors = get_vectors(imageUrl)
-        crop_feature_vector = vectors['crop_feature_vector']
-        full_feature_vector = vectors['full_feature_vector']
+        itemId, productName, productPart, unitPrice, imageUrl, fullFeatureVector, cropFeatureVector = row
+        if fullFeatureVector:
+            fullFeatureVector = [float(f)
+                                 for f in fullFeatureVector[1:-1].split(',')]
+            if cropFeatureVector:
+                cropFeatureVector = [float(f)
+                                     for f in cropFeatureVector[1:-1].split(',')]
+        else:
+            vectors = extract_image_vectors(imageUrl)
+            fullFeatureVector = vectors['full_feature_vector']
+            cropFeatureVector = vectors['crop_feature_vector']
+
+            fullFeatureVectorStr = ','.join(
+                str(f) for f in fullFeatureVector) if fullFeatureVector else None
+            cropFeatureVectorStr = ','.join(
+                str(f) for f in cropFeatureVector) if cropFeatureVector else None
+
+            insert_sql = f'UPDATE `items` SET fullFeatureVector=%s, cropFeatureVector=%s WHERE `itemId`={itemId}'
+            cursor.execute(
+                insert_sql, (fullFeatureVectorStr, cropFeatureVectorStr))
+            mysql_conn.commit()
 
         doc = {
             '_index': index_name,
@@ -186,8 +207,8 @@ def index_data():
                 'productName': productName,
                 'productPart': productPart,
                 'unitPrice': unitPrice,
-                'crop_feature_vector': crop_feature_vector,
-                'full_feature_vector': full_feature_vector
+                'full_feature_vector': fullFeatureVector,
+                'crop_feature_vector': cropFeatureVector
             }
         }
         docs.append(doc)
