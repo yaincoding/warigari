@@ -55,6 +55,8 @@ create_table_sql = '''
         `imageUrl` text,
         `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        `fullFeatureVector` varchar(10000),
+        `cropFeatureVector` varchar(10000)
         PRIMARY KEY (`itemId`)
     ) ENGINE=InnoDB AUTO_INCREMENT=45002 DEFAULT CHARSET=utf8mb3;
 '''
@@ -63,10 +65,10 @@ cursor.execute(create_table_sql)
 # 데이터 저장
 insert_sql = 'INSERT INTO Items (productName, productPart, imageUrl, unitPrice) VALUES (%s, %s, %s, %s);'
 for (_, row) in tqdm(df.iterrows()):
-    productName=row['productName']
-    productPart=row['productPart']
-    imageUrl=row['imageUrl']
-    unitPrice=row['unitPrice']
+    productName = row['productName']
+    productPart = row['productPart']
+    imageUrl = row['imageUrl']
+    unitPrice = row['unitPrice']
     cursor.execute(insert_sql, (productName, productPart, imageUrl, unitPrice))
 
 mysql_conn.commit()
