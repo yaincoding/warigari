@@ -86,25 +86,25 @@ def create_index():
             "id": {
                 "type": "integer"
             },
-            "productName": {
+            "name": {
                 "type": "text",
                 "analyzer": "index_analyzer",
                 "search_analyzer": "search_analyzer"
             },
-            "productPart": {
+            "category": {
                 "type": "keyword"
             },
-            "unitPrice": {
+            "price": {
                 "type": "integer"
             },
-            "imageUrl": {
+            "image_url": {
                 "type": "keyword"
             },
-            "fullFeatureVector": {
+            "full_feature_vector": {
                 "type": "dense_vector",
                 "dims": 256
             },
-            "imageFeatureVector": {
+            "crop_feature_vector": {
                 "type": "dense_vector",
                 "dims": 256
             }
@@ -200,17 +200,26 @@ def index_data():
                 insert_sql, (fullFeatureVectorStr, cropFeatureVectorStr))
             mysql_conn.commit()
 
+        print(imageUrl)
+
         doc = {
             '_index': index_name,
             '_source': {
                 'id': itemId,
-                'productName': productName,
-                'productPart': productPart,
-                'unitPrice': unitPrice,
+                'name': productName,
+                'category': productPart,
+                'price': unitPrice,
+                'image_url': imageUrl,
                 'full_feature_vector': fullFeatureVector,
-                'crop_feature_vector': cropFeatureVector
+                'crop_feature_vector': cropFeatureVector,
             }
         }
+
+        if fullFeatureVector:
+            doc['_source']['full_feature_vector'] = fullFeatureVector
+
+        if cropFeatureVector:
+            doc['_source']['crop_feature_vector'] = cropFeatureVector
         docs.append(doc)
         if len(docs) >= 100:
             helpers.bulk(es, docs)
