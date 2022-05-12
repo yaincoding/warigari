@@ -19,6 +19,11 @@ import { buildSchema } from "graphql";
 //   }
 // `);
 
+const session = {
+  userId: 100,
+  expiresIn: 30000,
+};
+
 const TypePerson = new Graphql.GraphQLObjectType({
   name: "Person",
   fields: {
@@ -36,8 +41,13 @@ const TypeQuery = new Graphql.GraphQLObjectType({
     },
     persons: {
       type: Graphql.GraphQLList(TypePerson),
-      resolve: () => {
-        console.log("hahah");
+      resolve: (obj, args, context, info) => {
+        console.log(args);
+        console.log("*****");
+        console.log(context);
+        console.log("-----");
+        console.log(info);
+        // console.log("hahah");
         return [
           { name: "kim", age: 29 },
           { name: "seo", age: 31 },
@@ -64,7 +74,7 @@ const app = express();
 app.set(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
+app.use("/graphql", graphqlHTTP({ schema, context: session, graphiql: true }));
 app.use("/", globalRouter);
 app.use("/api/search", searchRouter);
 
