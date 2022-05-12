@@ -1,5 +1,6 @@
 import express from "express";
 import globalRouter from "./routes/global.routes.js";
+import searchRouter from "./routes/search/search.js";
 
 // 2022.05.12
 import { graphqlHTTP } from "express-graphql";
@@ -12,7 +13,6 @@ const schema = buildSchema(`
 `);
 
 const root = { hello: () => "Hello World!" };
-import searchRouter from "./routes/search/search.js";
 
 const app = express();
 
