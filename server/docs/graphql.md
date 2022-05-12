@@ -38,7 +38,7 @@ app.use("/", globalRouter);
 
   두 가지 방법이 있다.
 
-  코드를 아래와 같이 수정
+  buildSchema 활용: 코드를 아래와 같이 수정
 
 ```jsx
 const schema = buildSchema(`
@@ -75,3 +75,38 @@ query {
 ```
 
 여기서 root를 resolver라 부르며, graphql은 schema와 resolver로 동작한다는 것을 알 수 있다. buildSchema로 정의한 패턴에서는, graphqlHTTP의 rootValue가 resolver 객체를 가지고, 객체 내부에서 query와 매칭되는 메서드를 실행한다. 실제 CRUD도 이 곳에서 이뤄진다.
+
+GraphQLSchema 활용
+
+```jsx
+const TypePerson = new Graphql.GraphQLObjectType({
+  name: "Person",
+  fields: {
+    name: { type: Graphql.GraphQLString },
+    age: { type: Graphql.GraphQLInt },
+  },
+});
+
+const TypeQuery = new Graphql.GraphQLObjectType({
+  name: "Query",
+  fields: {
+    hello: {
+      type: Graphql.GraphQLString,
+      resolve: () => "Hello world!",
+    },
+    persons: {
+      type: Graphql.GraphQLList(TypePerson),
+      resolve: () => {
+        console.log("hahah");
+        return [
+          { name: "kim", age: 29 },
+          { name: "seo", age: 31 },
+          { name: "park", age: 32 },
+        ];
+      },
+    },
+  },
+});
+
+const schema = new Graphql.GraphQLSchema({ query: TypeQuery });
+```
