@@ -1,18 +1,15 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { funcdo } from "../utils/image_utils/feature_extractor";
+import axios from "axios";
 
 const UserImageFashions = () => {
   const [searchData, setSearchData] = useState(null);
 
   const itemToFrame = (item) => {
-    const img = item.cropImage;
-    const label = item.label;
-
     const span = document.createElement("span");
-
+    span.appendChild(item.displayImage);
     const p = document.createElement("p");
-    p.innerText = label;
-    span.appendChild(img);
+    p.innerText = item.label;
     span.appendChild(p);
 
     return span;
@@ -35,6 +32,24 @@ const UserImageFashions = () => {
   useEffect(() => {
     if (searchData) {
       const { originalImage, items } = searchData;
+      if (items) {
+        for (const item of items) {
+          const { featureVector } = item;
+          console.log("featureVector", featureVector);
+          console.log("type", typeof featureVector);
+          axios({
+            url: "/api/search",
+            method: "post",
+            data: {
+              queryVector: Object.values(featureVector),
+            },
+          }).then((res) => {
+            for (const doc of res.data.docs) {
+              console.log(doc["_source"].image_url);
+            }
+          });
+        }
+      }
       renderImage(originalImage, true);
       for (const item of items) {
         renderImage(itemToFrame(item));

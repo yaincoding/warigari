@@ -29,7 +29,7 @@ const labelMap = {
   3: "top",
 };
 
-const threshold = 0.5;
+const threshold = 0.6;
 
 const filterBoxes = (boxes, scores) => {
   scores = scores.dataSync().filter((s) => s >= threshold);
@@ -60,14 +60,14 @@ const cropImage = (img_tensor, bboxes, img) => {
       "bilinear"
     );
 
-    crops.push({ image: cropped_img_tensor, bbox: bbox });
+    crops.push(cropped_img_tensor);
   }
   return crops;
 };
 
 const imageTensorToCanvas = (imgTensor) => {
   const canvas = document.createElement("canvas");
-  tf.browser.toPixels(tf.squeeze(imgTensor).div(255.0), canvas);
+  tf.browser.toPixels(tf.squeeze(imgTensor).div(tf.scalar(255.0)), canvas);
   return canvas;
 };
 
@@ -75,14 +75,14 @@ export const funcdo = async (img, setSearchData) => {
   const imgTensor = tf.browser.fromPixels(img).expandDims(0);
   odModelPromise.then((model) => {
     model.executeAsync(imgTensor).then((preds) => {
-      const scores = preds[2];
+      const scores = preds[6];
       const boxes = filterBoxes(preds[7], scores);
       const crops = cropImage(imgTensor, boxes, img);
 
       const items = [];
 
       for (let crop of crops) {
-        const cropImgTensor = crop["image"].resizeNearestNeighbor([224, 224]);
+        const cropImgTensor = crop.resizeBilinear([224, 224]).div(255.0);
         classifierModelPromise.then((model) => {
           const embedding = tf.sequential({
             layers: [model.layers[0], model.layers[1]],
@@ -102,18 +102,16 @@ export const funcdo = async (img, setSearchData) => {
           const output = classifier.predict(embeddingOutput.expandDims(0));
 
           const featureVector = embeddingOutput.dataSync();
+          console.log(featureVector);
           const label = labelMap[tf.argMax(output.dataSync()).dataSync()[0]];
 
-          const [_, height, width, __] = crop["image"].shape;
+          const [_, height, width, __] = crop.shape;
           const newHeight = 200;
           const newWidth = parseInt((newHeight * width) / height);
 
           items.push({
-            cropImage: imageTensorToCanvas(
-              tf.image.resizeNearestNeighbor(crop["image"], [
-                newHeight,
-                newWidth,
-              ])
+            displayImage: imageTensorToCanvas(
+              tf.image.resizeNearestNeighbor(crop, [newHeight, newWidth])
             ),
             featureVector: featureVector,
             label: label,
@@ -131,7 +129,6 @@ export const funcdo = async (img, setSearchData) => {
         ),
         items: items,
       });
-
       imgTensor.dispose();
     });
   });
