@@ -17,10 +17,10 @@ export const searchImage = async (feature_vector, fieldName) => {
           bool: {
             must: {
               exists: {
-                field: fieldName
-              }
-            }
-          }
+                field: fieldName,
+              },
+            },
+          },
         },
         script: {
           source: `cosineSimilarity(params.query_vector, '${fieldName}') + 1.0`,
