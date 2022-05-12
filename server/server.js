@@ -9,10 +9,23 @@ import { buildSchema } from "graphql";
 const schema = buildSchema(`
   type Query {
     hello: String
+    persons : [Person]
+  }
+  
+  type Person {
+    name: String,
+    age: Int
   }
 `);
 
-const root = { hello: () => "Hello World!" };
+const root = {
+  hello: () => "Hello World!",
+  persons: () => [
+    { name: "kim", age: 29 },
+    { name: "seo", age: 31 },
+    { name: "park", age: 32 },
+  ],
+};
 
 const app = express();
 
