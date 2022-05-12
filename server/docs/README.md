@@ -1,9 +1,3 @@
-## express-graphql 적용
-
-1. 모듈 설치
-
-- `npm i --save express-graphql graphql`
-
 ## express 서버 세팅
 
 1. 모듈 설치
@@ -14,3 +8,7 @@
 2. npm 스크립트 실행
 
 - `npm run dev`
+
+## graphql 적용
+
+[GraphQL](graphql.md)
