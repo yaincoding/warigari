@@ -1,4 +1,4 @@
-import { searchImage } from "../services/elasticsearch/esClient";
+import { searchImage } from "../services/elasticsearch/esClient.js";
 
 export const searchImageController = async (req, res) => {
   try {
