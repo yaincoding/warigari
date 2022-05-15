@@ -11,4 +11,5 @@
 
 ## graphql 적용
 
-[GraphQL](graphql.md)
+[GraphQL 입문](./graphql/graphql1.md)
+[DB와 연동 후 쿼리]()
