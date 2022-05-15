@@ -1,5 +1,5 @@
 import Graphql, { GraphQLScalarType } from "graphql";
-import { readOneUser, readAllusers } from "../services/user.js";
+import { readOneUser, readAllusers, createUser } from "../services/user.js";
 
 const { buildSchema } = Graphql;
 
@@ -24,8 +24,11 @@ new GraphQLScalarType({
 /**
  * exclamation mark : non null
  * scalar type : built-in graphql type (String, Int, Boolean, ID ....)
+ * query랑 mutation이 동시에 작동 안 하네
  */
 const schema = buildSchema(`
+  scalar Date
+
   type Query {
     user(account: String!): User
     users: [User]
@@ -38,7 +41,9 @@ const schema = buildSchema(`
     createdAt: Date!
   }
 
-  scalar Date
+  type Mutation {
+    createUser(account: String!, name: String!) : ID
+  }
 `);
 
 const resolver = {
@@ -49,6 +54,7 @@ const resolver = {
     return user;
   },
   users: async () => await readAllusers(),
+  createUser: async (args) => (await createUser(args)).id,
 };
 
 export { schema, resolver };
