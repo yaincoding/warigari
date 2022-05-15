@@ -12,4 +12,4 @@
 ## graphql 적용
 
 [GraphQL 입문](./graphql/graphql1.md)
-[DB와 연동 후 쿼리]()
+[DB와 연동 후 쿼리](./graphql//graphql2.md)
