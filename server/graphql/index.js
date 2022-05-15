@@ -42,8 +42,9 @@ const schema = buildSchema(`
   }
 
   type Mutation {
-    createUser(account: String!, name: String!) : ID
+    createUser(account: String!, name: String!): User
   }
+
 `);
 
 const resolver = {
@@ -54,7 +55,7 @@ const resolver = {
     return user;
   },
   users: async () => await readAllusers(),
-  createUser: async (args) => (await createUser(args)).id,
+  createUser: async (args) => await createUser(args),
 };
 
 export { schema, resolver };
