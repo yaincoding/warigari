@@ -161,6 +161,5 @@ resolver의 매개변수는 GraphQL 공식 문서를 참고했다. 참고로 bui
 
 ### 참고자료
 
-[GraphQL 공식 문서](https://graphql.org/learn/execution/#root-fields-resolvers)
-
+[GraphQL 공식 문서](https://graphql.org/learn/execution/#root-fields-resolvers)  
 [express-graphql 시작하기(Hello World Guide)](https://yuddomack.tistory.com/entry/expressgraphql-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0Hello-World-Guide)

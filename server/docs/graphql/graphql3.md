@@ -144,5 +144,5 @@ const resolver = {
 
 ## 참고자료
 
-[GraphQL 기본 자료형](https://yuddomack.tistory.com/entry/GraphQL-Schema%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EB%AC%B8%EB%B2%95)
+[GraphQL 기본 자료형](https://yuddomack.tistory.com/entry/GraphQL-Schema%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EB%AC%B8%EB%B2%95)  
 [공식 문서](https://graphql.org/learn/schema/)
