@@ -38,7 +38,7 @@ const schema = buildSchema(`
     id: ID
     account: String
     name: String
-    createdAt: Date!
+    createdAt: Date
   }
 
   type Mutation {
