@@ -11,5 +11,6 @@
 
 ## graphql 적용
 
-[GraphQL 입문](./graphql/graphql1.md)
+[GraphQL 입문](./graphql/graphql1.md)  
 [DB와 연동 후 쿼리](./graphql//graphql2.md)
+[데이터 타입, Mutation](./graphql/graphql3.md)
