@@ -1,7 +1,7 @@
-import Graphql, { GraphQLScalarType } from "graphql";
+import { buildSchema, GraphQLScalarType } from "graphql";
 import { readOneUser, readAllusers, createUser } from "../services/user.js";
 
-const { buildSchema } = Graphql;
+// const { buildSchema } = Graphql;
 
 // 도대체 어떻게 작동하는거지?
 new GraphQLScalarType({
@@ -25,20 +25,32 @@ new GraphQLScalarType({
  * exclamation mark : non null
  * scalar type : built-in graphql type (String, Int, Boolean, ID ....)
  * query랑 mutation이 동시에 작동 안 하네
+ * 상단에서 non-scalar 추가
  */
 const schema = buildSchema(`
   scalar Date
 
   type Query {
+    """
+    Find a user by account
+    """
     user(account: String!): User
-    users: [User]
+    users: [User!]!
   }
 
   type User {
-    id: ID
-    account: String
-    name: String
-    createdAt: Date
+    id: ID!
+    account: String!  
+    name: String!
+    """
+    The date when the user joined
+    """
+    createdAt: Date!
+    newField: String
+  }
+
+  extend type Query {
+    newField: String
   }
 
   type Mutation {
@@ -48,14 +60,22 @@ const schema = buildSchema(`
 `);
 
 const resolver = {
-  // 상단에서 non-scalar 추가
   user: async (args, context, info) => {
     const { account } = args;
+    console.log(account);
     const user = await readOneUser(account);
     return user;
   },
-  users: async () => await readAllusers(),
+  users: async (args, context, info) => {
+    console.log(args);
+    console.log("----------");
+    const users = await readAllusers();
+    return users;
+  },
+
   createUser: async (args) => await createUser(args),
+
+  newField: () => "Hello",
 };
 
 export { schema, resolver };

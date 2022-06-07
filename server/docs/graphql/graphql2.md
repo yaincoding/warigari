@@ -37,7 +37,8 @@ app.use(
 이번에는 schema와 resolver 코드를 분리해서 사용했다. `graphql/index.js` 에서 schema와 resolver를 모두 만들었다.
 사실 GraphQLSchema를 써보고 싶었지만.... 참고자료가 너무 부족했다. 어쩔 수 없이 buildSchema를 사용했다.
 
-`type Query` 에서 `user(account: String!)` 은 user라는 쿼리는 account라는 문자열을 쿼리 인자로 받고, 이 인자는 반드시 포함되어야 한다 라는 뜻이다. !(exclamation mark)는 공식문서를 찾아보면 그 의미를 알 수 있다.
+`type Query` 에서 `user(account: String!)` 은 user라는 쿼리는 account라는 문자열을 쿼리 인자로 받고, 이 인자는 반드시 포함되어야 한다(Non-nullable)라는 뜻이다. !(exclamation mark)는 공식문서를 찾아보면 그 의미를 알 수 있다.
+마찬가지로 리턴 타입에 !붙이면 null이 리턴되는 상황에서는 에러를 발생시킬 것이다. 또한 예를 들어 리턴 타입이 `[User!]!`로 명시가 되어 있다면, 해당 쿼리는 반드시 리스트를 반환 `[]!` 하고, 그 리스트의 요소는 무조건 `User!` 타입을 갖는다는 뜻이다.
 이 user 쿼리의 결과는 User라는 타입을 반환한다. User 타입은 그 아래에 다시 정의되어 있다.
 
 resolver에는 실제 서비스 로직이 들어가면 될 듯 하다. query에 넣는 인자는 resolver의 첫번째 인자르 받을 수 있다.
